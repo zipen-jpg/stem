@@ -123,6 +123,7 @@
     </header>
 
     <main class="p-4">
+      <!-- DASHBOARD -->
       <section id="view-dashboard" class="view space-y-4">
         <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
           <div class="bg-white p-4 rounded-xl border border-gray-200"><p class="text-[11px] text-gray-500">Total Produk</p><p id="jmlProduk" class="font-num text-xl font-700 text-primary">0</p></div>
@@ -137,6 +138,7 @@
         </div>
       </section>
 
+      <!-- KELOLA PRODUK -->
       <section id="view-produk" class="view hidden space-y-4">
         <div class="bg-white p-4 rounded-xl border border-gray-200">
           <h3 class="font-display font-700 text-sm mb-3">Kelola Produk</h3>
@@ -155,12 +157,12 @@
           <input type="file" id="gambarUpload" accept="image/*" onchange="pratinjauGambar(this)" class="w-full text-sm text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-primary file:text-white">
           <div id="kotakPratinjauGambar" class="preview-box text-gray-400 text-sm">Belum ada gambar</div>
           
-          <!-- UPLOAD VIDEO DARI GALERI -->
+          <!-- ✅ UPLOAD VIDEO DARI GALERI -->
           <label class="block text-xs font-medium text-gray-600 mt-3 mb-1">🎬 Upload Video Produk (Opsional)</label>
           <input type="file" id="videoUpload" accept="video/*" onchange="pratinjauVideo(this)" class="w-full text-sm text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-primary file:text-white">
           <div id="kotakPratinjauVideo" class="preview-box text-gray-400 text-sm">Belum ada video</div>
           
-          <!-- LINK CADANGAN (TETAP DIPERBOLEHKAN) -->
+          <!-- LINK CADANGAN -->
           <input type="text" id="gambarLink" placeholder="🔗 Atau tempel link gambar..." class="w-full bg-gray-50 border border-gray-200 p-2.5 rounded-lg outline-none text-sm mt-3 mb-1">
           <input type="text" id="videoLink" placeholder="🎬 Atau tempel link video..." class="w-full bg-gray-50 border border-gray-200 p-2.5 rounded-lg outline-none text-sm mb-1">
           <p class="text-[10px] text-gray-400 mb-3">📌 Biarkan kosong → sistem membuatkan gambar otomatis</p>
@@ -184,6 +186,7 @@
         </div>
       </section>
 
+      <!-- LAPORAN -->
       <section id="view-laporan" class="view hidden space-y-4">
         <div class="bg-white p-4 rounded-xl border border-gray-200">
           <h3 class="font-display font-700 text-sm mb-3">Filter Tanggal</h3>
@@ -219,6 +222,7 @@
         </div>
       </section>
 
+      <!-- GRAFIK -->
       <section id="view-grafik" class="view hidden space-y-4">
         <div class="bg-white p-4 rounded-xl border border-gray-200">
           <h3 class="font-display font-700 text-sm mb-3">Pendapatan Harian</h3>
@@ -244,8 +248,6 @@
     <button onclick="tutupModalPembeli()" class="w-full mt-4 bg-primary text-white py-2 rounded-lg font-display font-700">Tutup</button>
   </div>
 </div>
-
-<div id="toastBox" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50"></div>
 
 <script>
   // === NAMA DATABASE SAMA DENGAN index.html ===
@@ -279,7 +281,7 @@
     }
   }
 
-  // === PRATINJAU UPLOAD VIDEO ===
+  // === ✅ PRATINJAU UPLOAD VIDEO ===
   function pratinjauVideo(input) {
     const kotak = document.getElementById('kotakPratinjauVideo');
     if (input.files && input.files[0]) {
@@ -295,7 +297,7 @@
     }
   }
 
-  // === BUAT GAMBAR OTOMATIS SAMA DENGAN index.html ===
+  // === BUAT GAMBAR OTOMATIS ===
   function buatGambarProduk(inisial, warnaLatar) {
     const huruf = (inisial||'?').trim().charAt(0).toUpperCase();
     const warna = warnaLatar || '#ff2d55';
@@ -408,7 +410,7 @@
     const varianWarna = document.getElementById('warnaVar').value.trim();
     const deskripsi = document.getElementById('deskripsi').value.trim();
 
-    // Prioritas: File Upload > Link Input > Otomatis
+    // ✅ Prioritas: File Upload > Link Input > Otomatis
     const gambar = fileGambarBase64 || document.getElementById('gambarLink').value.trim();
     const video = fileVideoBase64 || document.getElementById('videoLink').value.trim();
 
@@ -474,7 +476,7 @@
       fileVideoBase64 = p.video;
     }
 
-    // === OTOMATIS GESER KE ATAS FORM SAAT KLIK UBAH ===
+    // ✅ OTOMATIS GESER KE ATAS FORM SAAT KLIK UBAH
     document.getElementById('nama').scrollIntoView({behavior:'smooth', block:'center'});
   }
 
@@ -491,7 +493,7 @@
     muatSemua();
   }
 
-  // === FUNGSI MODAL INFORMASI PEMBELI ===
+  // === MODAL INFORMASI PEMBELI ===
   function bukaModalPembeli(indexTransaksi){
     const transaksi = ambilData(KEY_TRANSAKSI);
     const t = transaksi[indexTransaksi];
@@ -594,6 +596,7 @@
 
   cekLogin();
 
+  // Sinkron otomatis dari halaman toko
   window.addEventListener('storage', (e) => {
     if (e.key === KEY_PRODUK || e.key === KEY_TRANSAKSI) { 
       muatSemua(); 
