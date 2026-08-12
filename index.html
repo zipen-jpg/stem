@@ -64,7 +64,7 @@
   .video-btn:active { transform: scale(.97); }
   .video-container { width: 100%; border-radius: 12px; overflow: hidden; background: #000; margin-bottom: 16px; display: none; }
   .video-container.show { display: block; }
-  .video-container video { width: 100%; display: block; }
+  .video-container video { width: 100%; display: block; background: #000; }
   .tab-bawah { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #eee; display: flex; justify-content: space-around; padding: 8px 0; z-index: 50; }
   .tab-bawah button { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 11px; color: #888; background: none; border: none; cursor: pointer; }
   .tab-bawah button.aktif { color: #ff2d55; }
@@ -133,8 +133,7 @@
       ▶️ Tonton Video Produk
     </button>
     <div id="kotakVideo" class="video-container">
-      <video id="videoProduk" controls playsinline>
-        <source src="" type="video/mp4">
+      <video id="videoProduk" controls muted playsinline preload="metadata">
         Browser Anda tidak mendukung pemutaran video.
       </video>
     </div>
@@ -162,7 +161,7 @@
     </div>
   </div>
 
-  <!-- ✅ TOMBOL DI BAWAH TETAP TERLIHAT -->
+  <!-- TOMBOL DI BAWAH -->
   <div class="tombol-bawah-fixed flex gap-3">
     <button onclick="tambahKeKeranjangDariDetail()" class="flex-1 py-3 rounded-xl border-2 border-primary text-primary font-bold text-base">+ Keranjang</button>
     <button onclick="beliSekarang()" id="btnBeliSekarang" class="flex-1 py-3 rounded-xl bg-primary text-white font-bold text-base">🛒 Beli Sekarang</button>
@@ -179,7 +178,6 @@
     <div id="isiKeranjang"></div>
     <p id="keranjangKosong" class="text-center text-gray-400 py-12">Keranjang masih kosong</p>
   </div>
-  <!-- ✅ TOMBOL CHECKOUT DI BAWAH SELALU TERLIHAT -->
   <div class="tombol-bawah-fixed">
     <div class="flex justify-between items-center mb-2">
       <span class="font-semibold text-gray-700">Total:</span>
@@ -283,7 +281,7 @@
   let sumberCheckout = '';
   let videoTerbuka = false;
 
-  // Data default jika belum ada produk dari Admin
+  // Data contoh
   const dataContoh = [
     { 
       id:1, nama:'Kaos Polos Combed', harga:75000, kategori:'Fashion', stok:99, 
@@ -308,7 +306,7 @@
     return list;
   }
 
-  // Buat gambar otomatis jika tidak ada gambar upload
+  // Buat gambar otomatis
   function buatGambarProduk(inisial, warnaLatar) {
     const huruf = (inisial||'?').trim().charAt(0).toUpperCase();
     const warna = warnaLatar || '#888';
@@ -358,7 +356,7 @@
     }).join('');
   }
 
-  // === NAVIGASI BAWAH ===
+  // === NAVIGASI ===
   function bukaHalamanUtama() {
     sembunyikanSemuaHalaman();
     document.getElementById('halamanToko').classList.remove('hidden');
@@ -378,7 +376,7 @@
     bukaHalamanUtama();
   }
 
-  // === TAMPILAN STATUS PESANAN ===
+  // === STATUS PESANAN ===
   function tampilStatusPesanan() {
     const transaksi = ambilData(KEY_TRANSAKSI).reverse();
     document.getElementById('pesananKosong').classList.toggle('hidden', transaksi.length>0);
@@ -412,6 +410,7 @@
     }).join('');
   }
 
+  // === BUKA DETAIL PRODUK ===
   function bukaDetail(id) {
     const semuaProduk = ambilProduk();
     produkTerpilih = semuaProduk.find(p=>p.id===id);
@@ -421,7 +420,7 @@
     document.getElementById('namaDetail').textContent = produkTerpilih.nama;
     document.getElementById('hargaDetail').textContent = 'Rp ' + produkTerpilih.harga.toLocaleString('id-ID');
     
-    // Tampilkan stok & cek ketersediaan
+    // Stok
     if (produkTerpilih.stok > 0) {
       document.getElementById('stokDetail').textContent = `Stok Tersedia: ${produkTerpilih.stok}`;
       document.getElementById('stokDetail').className = 'stok-info';
@@ -439,36 +438,38 @@
       ? produkTerpilih.deskripsi 
       : 'Belum ada deskripsi untuk produk ini.';
 
-    // Tampilkan Gambar (dari upload/admin atau otomatis)
+    // Gambar
     const gambar = produkTerpilih.gambar && produkTerpilih.gambar.trim() !== '' 
       ? produkTerpilih.gambar 
       : buatGambarProduk(produkTerpilih.inisial, produkTerpilih.warnaLatar);
     document.getElementById('gambarDetail').innerHTML = `<img src="${gambar}" class="w-full h-full object-cover" alt="${produkTerpilih.nama}" onerror="this.parentElement.innerHTML='<div class=\\'w-full h-full flex items-center justify-center text-8xl\\'>${produkTerpilih.inisial||'?'}</div>'">`;
 
-    // Tampilkan Video jika ada
-    const sumberVideo = document.querySelector('#videoProduk source');
+    // ✅ VIDEO PRODUK - DIPERBAIKI
+    const elemenVideo = document.getElementById('videoProduk');
     const tombolVideo = document.getElementById('tombolVideo');
     const kotakVideo = document.getElementById('kotakVideo');
-    const elemenVideo = document.getElementById('videoProduk');
     
     if (produkTerpilih.video && produkTerpilih.video.trim() !== '') {
-      sumberVideo.src = produkTerpilih.video;
-      elemenVideo.load();
+      elemenVideo.src = produkTerpilih.video;
       tombolVideo.style.display = 'flex';
+      kotakVideo.classList.remove('show');
+      elemenVideo.pause();
+      elemenVideo.currentTime = 0;
     } else {
       tombolVideo.style.display = 'none';
       kotakVideo.classList.remove('show');
       elemenVideo.pause();
+      elemenVideo.src = '';
     }
     videoTerbuka = false;
 
-    // Pilihan Ukuran
+    // Ukuran
     const daftarUkuran = (produkTerpilih.ukuran||'Standar').split(',').map(s=>s.trim()).filter(s=>s);
     document.getElementById('pilihUkuran').innerHTML = daftarUkuran.map(u=>`<button onclick="pilihUkuran('${u}')">${u}</button>`).join('');
     ukuranTerpilih = daftarUkuran[0];
     sorotPilihan('pilihUkuran', ukuranTerpilih);
 
-    // Pilihan Warna
+    // Warna
     const daftarWarna = (produkTerpilih.varianWarna||'Standar').split(',').map(w=>w.trim()).filter(w=>w);
     document.getElementById('pilihWarna').innerHTML = daftarWarna.map(w=>`<button onclick="pilihWarna('${w}')">${w}</button>`).join('');
     warnaTerpilih = daftarWarna[0];
@@ -480,6 +481,7 @@
     document.getElementById('halamanDetail').classList.remove('hidden');
   }
 
+  // ✅ FUNGSI PUTAR VIDEO - DIPERBAIKI
   function putarVideo() {
     const kotakVideo = document.getElementById('kotakVideo');
     const elemenVideo = document.getElementById('videoProduk');
@@ -487,7 +489,8 @@
 
     if (!videoTerbuka) {
       kotakVideo.classList.add('show');
-      elemenVideo.play().catch(() => {});
+      elemenVideo.load();
+      elemenVideo.play().catch(err=>console.log('Video play error:', err));
       tombolVideo.innerHTML = '⏹️ Tutup Video';
       videoTerbuka = true;
     } else {
@@ -718,7 +721,7 @@
       }
     }
 
-    // ✅ KURANGI STOK & SIMPAN KE DATABASE (TERHUBUNG DENGAN ADMIN)
+    // Kurangi stok
     items.forEach(item=>{
       const idx = semuaProduk.findIndex(x=>x.id===item.id);
       if (idx >= 0) { semuaProduk[idx].stok -= item.qty; }
@@ -727,7 +730,7 @@
 
     const total = items.reduce((s,i)=>s + i.harga*i.qty,0);
 
-        // ✅ SIMPAN TRANSAKSI TERHUBUNG DENGAN ADMIN
+    // Simpan transaksi
     const transaksi = ambilData(KEY_TRANSAKSI);
     transaksi.push({
       tanggal: new Date().toISOString(),
@@ -739,7 +742,7 @@
     });
     simpanData(KEY_TRANSAKSI, transaksi);
 
-    // Kosongkan keranjang jika dari keranjang
+    // Kosongkan keranjang
     if (sumberCheckout === 'keranjang') {
       simpanKeranjang([]);
       hitungJumlahKeranjang();
@@ -747,7 +750,6 @@
 
     alert('✅ Pesanan berhasil dibuat! Terima kasih telah berbelanja.');
 
-    // Kembali ke halaman status pesanan
     sembunyikanSemuaHalaman();
     bukaHalamanStatus();
   }
@@ -759,7 +761,7 @@
     hitungJumlahKeranjang();
   });
 
-  // === SINKRON OTOMATIS JIKA ADA PERUBAHAN DARI HALAMAN ADMIN ===
+  // Sinkron otomatis
   window.addEventListener('storage', function(e) {
     if (e.key === KEY_PRODUK || e.key === KEY_TRANSAKSI) {
       renderProduk();
@@ -769,4 +771,3 @@
 </script>
 </body>
 </html>
-
