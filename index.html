@@ -35,7 +35,7 @@
 <style>
   * { font-family: 'Plus Jakarta Sans', sans-serif; }
   .font-display { font-family: 'Sora', sans-serif; }
-  body { background: #ffffff; color: #1a1a1a; padding-bottom: 80px; }
+  body { background: #ffffff; color: #1a1a1a; padding-bottom: 90px; }
   .hidden { display: none !important; }
   .produk-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
   @media (min-width: 768px) { .produk-grid { grid-template-columns: repeat(3, 1fr); } }
@@ -65,7 +65,7 @@
   .video-container { width: 100%; border-radius: 12px; overflow: hidden; background: #000; margin-bottom: 16px; display: none; }
   .video-container.show { display: block; }
   .video-container video { width: 100%; display: block; }
-  .tab-bawah { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #eee; display: flex; justify-content: space-around; padding: 8px 0; z-index: 40; }
+  .tab-bawah { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #eee; display: flex; justify-content: space-around; padding: 8px 0; z-index: 50; }
   .tab-bawah button { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 11px; color: #888; background: none; border: none; cursor: pointer; }
   .tab-bawah button.aktif { color: #ff2d55; }
   .tab-bawah button span { font-size: 18px; }
@@ -75,6 +75,8 @@
   .status-dikirim { background: #f5f3ff; color: #8b5cf6; }
   .status-selesai { background: #f0fdf4; color: #00c48c; }
   .status-dibatalkan { background: #fef2f2; color: #ef4444; }
+  .tombol-bawah-fixed { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #eee; padding: 12px 16px; z-index: 60; }
+  .tombol-bawah-2 { padding-bottom: 90px; }
 </style>
 </head>
 <body>
@@ -119,12 +121,12 @@
 </div>
 
 <!-- === HALAMAN DETAIL PRODUK === -->
-<div id="halamanDetail" class="hidden pb-24">
+<div id="halamanDetail" class="hidden pb-32">
   <header class="sticky top-0 bg-white/90 backdrop-blur-sm px-4 py-3 flex items-center gap-3 z-30 border-b border-gray-100">
     <button onclick="tutupDetail()" class="text-xl text-gray-800">←</button>
     <h1 id="judulDetail" class="font-display font-700 text-lg truncate text-gray-800"></h1>
   </header>
-  <div class="px-4 pt-4">
+  <div class="px-4 pt-4 pb-28">
     <div id="gambarDetail" class="w-full aspect-square rounded-xl overflow-hidden mb-4 bg-gray-100 flex items-center justify-center"></div>
     
     <button id="tombolVideo" onclick="putarVideo()" class="video-btn" style="display:none;">
@@ -158,11 +160,12 @@
         <button onclick="ubahJumlah(1)" class="w-9 h-9 rounded-full bg-gray-100 text-lg flex items-center justify-center text-gray-800 border border-gray-200">+</button>
       </div>
     </div>
+  </div>
 
-    <div class="flex gap-3">
-      <button onclick="tambahKeKeranjangDariDetail()" class="flex-1 py-3 rounded-xl border border-primary text-primary font-bold">+ Keranjang</button>
-      <button onclick="beliSekarang()" id="btnBeliSekarang" class="flex-1 py-3 rounded-xl bg-primary text-white font-bold">Beli Sekarang</button>
-    </div>
+  <!-- ✅ TOMBOL DI BAWAH TETAP TERLIHAT -->
+  <div class="tombol-bawah-fixed flex gap-3">
+    <button onclick="tambahKeKeranjangDariDetail()" class="flex-1 py-3 rounded-xl border-2 border-primary text-primary font-bold text-base">+ Keranjang</button>
+    <button onclick="beliSekarang()" id="btnBeliSekarang" class="flex-1 py-3 rounded-xl bg-primary text-white font-bold text-base">🛒 Beli Sekarang</button>
   </div>
 </div>
 
@@ -172,16 +175,17 @@
     <button onclick="tutupKeranjang()" class="text-xl text-gray-800">←</button>
     <h1 class="font-display font-700 text-lg text-gray-800">Keranjang</h1>
   </header>
-  <div class="px-4 pt-3">
+  <div class="px-4 pt-3 pb-28">
     <div id="isiKeranjang"></div>
     <p id="keranjangKosong" class="text-center text-gray-400 py-12">Keranjang masih kosong</p>
   </div>
-  <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3">
+  <!-- ✅ TOMBOL CHECKOUT DI BAWAH SELALU TERLIHAT -->
+  <div class="tombol-bawah-fixed">
     <div class="flex justify-between items-center mb-2">
       <span class="font-semibold text-gray-700">Total:</span>
       <span id="totalKeranjang" class="font-bold text-primary text-lg">Rp 0</span>
     </div>
-    <button onclick="bukaCheckout()" class="w-full bg-primary text-white py-3 rounded-xl font-bold">Checkout</button>
+    <button onclick="bukaCheckout()" class="w-full bg-primary text-white py-3 rounded-xl font-bold text-base">✅ Checkout Sekarang</button>
   </div>
 </div>
 
@@ -191,7 +195,7 @@
     <button onclick="kembaliKeSebelumnya()" class="text-xl text-gray-800">←</button>
     <h1 class="font-display font-700 text-lg text-gray-800">Checkout</h1>
   </header>
-  <div class="px-4 pt-3 space-y-5">
+  <div class="px-4 pt-3 pb-28 space-y-5">
     <div class="bg-white p-4 rounded-xl border border-gray-200">
       <h3 class="font-semibold mb-3 text-gray-700">📍 Data Penerima</h3>
       <div class="space-y-3">
@@ -251,8 +255,8 @@
     </div>
   </div>
 
-  <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3">
-    <button onclick="konfirmasiPesanan()" id="btnKonfirmasi" class="w-full bg-primary text-white py-3 rounded-xl font-bold">✓ Konfirmasi Pesanan</button>
+  <div class="tombol-bawah-fixed">
+    <button onclick="konfirmasiPesanan()" id="btnKonfirmasi" class="w-full bg-primary text-white py-3 rounded-xl font-bold text-base">✓ Konfirmasi Pesanan</button>
   </div>
 </div>
 
@@ -723,7 +727,7 @@
 
     const total = items.reduce((s,i)=>s + i.harga*i.qty,0);
 
-    // ✅ SIMPAN TRANSAKSI TERHUBUNG DENGAN ADMIN
+        // ✅ SIMPAN TRANSAKSI TERHUBUNG DENGAN ADMIN
     const transaksi = ambilData(KEY_TRANSAKSI);
     transaksi.push({
       tanggal: new Date().toISOString(),
@@ -755,7 +759,6 @@
     hitungJumlahKeranjang();
   });
 
-  // === SINKRON OTOMATIS JIKA ADA PERUBAHAN D
   // === SINKRON OTOMATIS JIKA ADA PERUBAHAN DARI HALAMAN ADMIN ===
   window.addEventListener('storage', function(e) {
     if (e.key === KEY_PRODUK || e.key === KEY_TRANSAKSI) {
@@ -766,3 +769,4 @@
 </script>
 </body>
 </html>
+
